@@ -97,21 +97,112 @@ represented using foreign keys instead of duplicated data.
 \section{API design}
 % ============================================================
 
-The FastAPI backend provides CRUD endpoints for all main entities.
-Write operations require a valid X-API-Key header.
-The profitability calculation is implemented using a JOIN between jobs,
-\texttt{job\_materials} and materials together with an aggregation of material costs.
+The FastAPI backend provides RESTful CRUD endpoints for all main entities.
+The API acts as the communication layer between the frontend application and
+the PostgreSQL database.
+
+The frontend communicates with the backend using HTTP requests and JSON data.
+Read operations are provided through GET requests, while write operations
+require a valid \texttt{X-API-Key} header.
+
+The profitability calculation is implemented using SQL JOIN operations between
+\texttt{jobs}, \texttt{job\_materials}, \texttt{materials} and
+\texttt{invoices}. Aggregation is used to calculate the total material costs
+for each job.
 
 \renewcommand{\arraystretch}{1.2}
 \begin{tabularx}{\linewidth}{@{}p{2cm}p{4cm}X@{}}
 \toprule
 \textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
 \midrule
-\texttt{GET} & \texttt{/jobs/profit} & Returns jobs with calculated profit values using JOIN and aggregation. \\
-\texttt{POST} & \texttt{/jobs} & Creates a new job. Requires X-API-Key. \\
+
+\texttt{GET} &
+\texttt{/customers} &
+Returns all customers. \\
+
+\texttt{POST} &
+\texttt{/customers} &
+Creates a new customer. Requires X-API-Key. \\
+
+\texttt{GET} &
+\texttt{/jobs} &
+Returns all jobs. \\
+
+\texttt{POST} &
+\texttt{/jobs} &
+Creates a new job. Requires X-API-Key. \\
+
+\texttt{PUT} &
+\texttt{/jobs/\{id\}} &
+Updates an existing job. Requires X-API-Key. \\
+
+\texttt{DELETE} &
+\texttt{/jobs/\{id\}} &
+Deletes an existing job. Requires X-API-Key. \\
+
+\texttt{GET} &
+\texttt{/materials} &
+Returns all available materials. \\
+
+\texttt{POST} &
+\texttt{/materials} &
+Creates a new material entry. Requires X-API-Key. \\
+
+\texttt{POST} &
+\texttt{/job\_materials} &
+Assigns materials and quantities to a job.
+Requires X-API-Key. \\
+
+\texttt{GET} &
+\texttt{/invoices} &
+Returns all invoices. \\
+
+\texttt{POST} &
+\texttt{/invoices} &
+Creates a new invoice. Requires X-API-Key. \\
+
+\texttt{GET} &
+\texttt{/jobs/profit} &
+Returns jobs with calculated profit values using JOIN
+and aggregation. \\
+
 \bottomrule
 \end{tabularx}
 
+\textbf{Profit calculation.}
+
+The endpoint \texttt{GET /jobs/profit} calculates the estimated profit of
+each job using the following formula:
+
+\[
+\text{Profit} =
+\text{Invoice Amount}
+-
+\sum(\text{Quantity} \times \text{Purchase Price})
+\]
+
+The calculation combines invoice data with material usage data. The result
+contains the invoice amount, total material costs and the calculated profit
+for every job.
+
+\textbf{Example response:}
+
+\begin{verbatim}
+GET /jobs/profit
+
+[
+ {
+  "job_id": 1,
+  "title": "Electrical installation",
+  "invoice_amount": 1200,
+  "material_cost": 350,
+  "profit": 850
+ }
+]
+\end{verbatim}
+
+Unauthorized write requests without a valid
+\texttt{X-API-Key} are rejected by the backend with an HTTP 401/403 response.
 % ============================================================
 \section{Frontend prototype (wireframes)}
 % ============================================================
