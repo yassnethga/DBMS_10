@@ -1,24 +1,18 @@
 % ============================================================
-%  TERM PROJECT – PROPOSAL (template)
+%  TERM PROJECT – PROPOSAL
 %  Databases · THGA Bochum
-%
-%  How to use:
-%    1. Copy this folder into your own repository.
-%    2. Replace every  <<< ... >>>  placeholder with your content.
-%    3. Build with  `make`  (see the Makefile / README).
-%    4. Send the resulting PDF to the lecturer and wait for approval.
 % ============================================================
 \documentclass[11pt,a4paper]{article}
 
 \usepackage{thga-db}
-\usepackage{caption}   % enables \captionof inside minipages
+\usepackage{caption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
 
-% ----- Fill in your metadata -------------------------------
 \renewcommand{\thgaKurs}{Databases}
 \renewcommand{\thgaDatum}{Summer Term 2026}
-\newcommand{\authorName}{<<< Your name >>>}
-\newcommand{\projectTitle}{<<< Working title of your application >>>}
-
+\newcommand{\authorName}{Mohamed Yassine Hachimi}
+\newcommand{\projectTitle}{HandwerkerKasse -- Material and Invoice Tracker with Profit Analysis per Job}
 \begin{document}
 \thispagestyle{empty}
 \thgaTitel{Term Project – Proposal}{\projectTitle}
@@ -30,28 +24,21 @@
 \textbf{Target size:} about 6 pages
 \end{infobox}
 
-\begin{infobox}
-\textbf{Every figure must be explained in the running text.} A figure never
-stands on its own: refer to it by number and say what it shows -- e.g.
-``Figure~\ref{fig:er} shows the ER model of \dots''.
-
-Every figure below is \texttt{example-figure.jpg}, a dummy image shipped with
-this template. Photograph or scan your own sketch, drop the file next to
-\texttt{proposal.tex}, and point \texttt{\textbackslash includegraphics} at it:
-\begin{quote}
-\texttt{\textbackslash includegraphics[width=0.85\textbackslash linewidth]\{er-sketch.jpg\}}
-\end{quote}
-The \texttt{width} option scales the image to a fraction of the text width; the
-file extension may be omitted. Keep the \texttt{\textbackslash caption} and the
-\texttt{\textbackslash label} as they are.
-\end{infobox}
-
 % ============================================================
 \section{Application domain and motivation}
 % ============================================================
 
-<<< Which application do you build and which problem does it solve? Who uses
-it, and for what? Add one or two concrete usage scenarios. >>>
+HandwerkerKasse is a database-driven web application for small craft businesses.
+The system allows users to manage customers, jobs, materials and invoices.
+The main goal is to provide a clear overview of job profitability by comparing
+the invoice amount with the used material costs.
+
+The application is designed for local craft businesses, self-employed workers
+and small service providers. It helps users track projects, record used
+materials, create invoices and identify whether a job was profitable. A typical usage scenario is an electrician creating a new customer order,
+adding required materials such as cables and components, and generating an
+invoice after completing the work. The system then calculates the estimated
+profit by subtracting material costs from the invoice amount.
 
 % ============================================================
 \section{Data model -- ER sketch}
@@ -59,149 +46,224 @@ it, and for what? Add one or two concrete usage scenarios. >>>
 
 \begin{figure}[ht]
   \centering
-  % Swap example-figure.jpg for your own file, e.g. er-sketch.jpg
-  % (a photographed hand drawing is fine).
-  \includegraphics[width=0.85\linewidth]{example-figure.jpg}
-  \caption{ER sketch of the <<< domain >>> data model: entity types, key
-  attributes, relationships and cardinalities (at least one N:M).}
+  \begin{tikzpicture}[
+    box/.style={draw, rounded corners, minimum width=2.8cm, minimum height=1cm, align=center, font=\small},
+    node distance=1.6cm and 2cm
+  ]
+    \node[box] (customers) {customers};
+    \node[box, right=of customers] (jobs) {jobs};
+    \node[box, below=of jobs] (jobmat) {job\_materials};
+    \node[box, right=of jobmat] (materials) {materials};
+    \node[box, above=of materials] (invoices) {invoices};
+
+    \draw[-{Latex[length=2mm]}] (customers) -- node[above,font=\scriptsize]{1:N} (jobs);
+    \draw[-{Latex[length=2mm]}] (jobs) -- node[right,font=\scriptsize]{1:N} (jobmat);
+    \draw[-{Latex[length=2mm]}] (materials) -- node[above,font=\scriptsize]{1:N} (jobmat);
+    \draw[-{Latex[length=2mm]}] (jobs) -- node[right,font=\scriptsize]{1:1} (invoices);
+  \end{tikzpicture}
+  \caption{ER sketch of the handcraft business data model}
   \label{fig:er}
 \end{figure}
 
-Figure~\ref{fig:er} shows <<< explain your ER model here: name the central
-entity types, the key attributes and the relationships, and point out the N:M
-relationship and its cardinalities. >>>
+Figure~\ref{fig:er} shows the ER model of the HandwerkerKasse system.
+The main entities are customers, jobs, materials and invoices.
+A customer can have multiple jobs, while each job can contain multiple
+materials. The N:M relationship between jobs and materials is represented by
+the \texttt{job\_materials} table, which also stores the quantity of each used material.
+Each job can have one related invoice containing the billing information.
 
 % ============================================================
 \section{From model to schema}
 % ============================================================
 
-<<< Derive the relational schema. For each table give the columns, the primary
-key (underlined) and the foreign keys. >>>
+The relational schema consists of the following tables:
 
 \begin{itemize}
-  \item \texttt{<<<table>>>}(\underline{id}, <<<column>>>, \dots)
-  \item \texttt{<<<table>>>}(\underline{id}, \emph{<<<foreign\_key>>>}, \dots)
+  \item \texttt{customers}(\underline{id}, name, email, phone)
+  \item \texttt{jobs}(\underline{id}, 
+        \emph{customer\_id}, title, status, date)
+  \item \texttt{materials}(\underline{id}, name, purchase\_price)
+  \item \texttt{job\_materials}(\underline{id},
+        \emph{job\_id}, \emph{material\_id}, quantity)
+  \item \texttt{invoices}(\underline{id},
+        \emph{job\_id}, amount, payment\_status)
 \end{itemize}
 
-\textbf{Normalisation.} <<< One or two sentences: why is the schema free of
-redundancy (at least 3NF)? >>>
+\textbf{Normalisation.} The database schema follows the principles of the third normal form (3NF).
+Each table stores one specific type of information and relationships are
+represented using foreign keys instead of duplicated data.
 
 % ============================================================
 \section{API design}
 % ============================================================
 
-<<< List the planned FastAPI endpoints. Mark where a JOIN / an aggregation
-sits, and which endpoints require the X-API-Key. >>>
+The FastAPI backend provides CRUD endpoints for all main entities.
+Write operations require a valid X-API-Key header.
+The profitability calculation is implemented using a JOIN between jobs,
+\texttt{job\_materials} and materials together with an aggregation of material costs.
 
 \renewcommand{\arraystretch}{1.2}
 \begin{tabularx}{\linewidth}{@{}p{2cm}p{4cm}X@{}}
 \toprule
 \textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
 \midrule
-\texttt{GET}  & \texttt{/<<<…>>>} & <<< reads … (JOIN / aggregation) >>> \\
-\texttt{POST} & \texttt{/<<<…>>>} & <<< creates … (requires X-API-Key) >>> \\
+\texttt{GET} & \texttt{/jobs/profit} & Returns jobs with calculated profit values using JOIN and aggregation. \\
+\texttt{POST} & \texttt{/jobs} & Creates a new job. Requires X-API-Key. \\
 \bottomrule
 \end{tabularx}
 
 % ============================================================
-\section{Frontend prototype (hand sketches)}
+\section{Frontend prototype (wireframes)}
 % ============================================================
 
-<<< Describe what the frontend looks like and which endpoints it operates, and
-document a prototypical frontend with hand-drawn sketches -- one per screen/form.
-Python/tkinter is recommended; if you use something else, say what and why. The
-frontend is delivered as a .deb installer and asks for the API URL and X-API-Key
-in a connection dialog at startup. >>>
+The frontend is a lightweight desktop application installed as a Debian
+package (.deb). At startup it asks for the API URL and X-API-Key.
+The application provides screens for customers, jobs, materials and invoices.
 
-% Each \includegraphics below still points at the dummy example-figure.jpg.
-% Swap in your own file per screen, e.g. {fe-connect.jpg}, and keep the \captionof.
+The main screen displays a list of jobs and their profitability.
+Forms allow users to create and update records through the FastAPI endpoints.
+
 \begin{figure}[ht]
 \centering
 \begin{minipage}[t]{0.47\linewidth}\centering
-  \includegraphics[width=\linewidth]{example-figure.jpg}
+  \begin{tikzpicture}
+    \draw[thick] (0,0) rectangle (5,3);
+    \node[font=\small] at (2.5,2.6) {Connect to Server};
+    \draw (0.3,1.9) rectangle (4.7,2.3); \node[font=\tiny] at (2.5,2.1){API URL};
+    \draw (0.3,1.3) rectangle (4.7,1.7); \node[font=\tiny] at (2.5,1.5){X-API-Key};
+    \draw (1.7,0.4) rectangle (3.3,0.9); \node[font=\tiny] at (2.5,0.65){Connect};
+  \end{tikzpicture}
   \captionof{figure}{Startup connection dialog: API URL + X-API-Key.}
   \label{fig:fe-connect}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.47\linewidth}\centering
-  \includegraphics[width=\linewidth]{example-figure.jpg}
-  \captionof{figure}{Main screen: <<< list/table, calls \texttt{GET /<<<…>>>} >>>.}
+  \begin{tikzpicture}
+    \draw[thick] (0,0) rectangle (5,3);
+    \node[font=\small] at (2.5,2.6) {Jobs Overview};
+    \draw (0.3,1.9) rectangle (4.7,2.3); \node[font=\tiny] at (2.5,2.1){Job A -- Profit: 120EUR};
+    \draw (0.3,1.4) rectangle (4.7,1.8); \node[font=\tiny] at (2.5,1.6){Job B -- Profit: -15EUR};
+    \draw (0.3,0.9) rectangle (4.7,1.3); \node[font=\tiny] at (2.5,1.1){Job C -- Profit: 80EUR};
+  \end{tikzpicture}
+  \captionof{figure}{Main screen: job list with calculated profit, calls \texttt{GET /jobs/profit}.}
   \label{fig:fe-main}
 \end{minipage}
 
 \vspace{1em}
 
 \begin{minipage}[t]{0.47\linewidth}\centering
-  \includegraphics[width=\linewidth]{example-figure.jpg}
-  \captionof{figure}{Detail form: <<< create/edit, calls \texttt{POST /<<<…>>>} >>>.}
+  \begin{tikzpicture}
+    \draw[thick] (0,0) rectangle (5,3);
+    \node[font=\small] at (2.5,2.6) {New Job};
+    \draw (0.3,1.9) rectangle (4.7,2.3); \node[font=\tiny] at (2.5,2.1){Customer};
+    \draw (0.3,1.4) rectangle (4.7,1.8); \node[font=\tiny] at (2.5,1.6){Title};
+    \draw (0.3,0.9) rectangle (4.7,1.3); \node[font=\tiny] at (2.5,1.1){Add Material};
+    \draw (1.7,0.3) rectangle (3.3,0.7); \node[font=\tiny] at (2.5,0.5){Save};
+  \end{tikzpicture}
+  \captionof{figure}{Detail form: add job and materials, calls \texttt{POST /jobs} and \texttt{POST /job\_materials}.}
   \label{fig:fe-detail}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.47\linewidth}\centering
-  \includegraphics[width=\linewidth]{example-figure.jpg}
-  \captionof{figure}{<<< Second feature screen and the endpoint it calls >>>.}
+  \begin{tikzpicture}
+    \draw[thick] (0,0) rectangle (5,3);
+    \node[font=\small] at (2.5,2.6) {Invoice};
+    \draw (0.3,1.9) rectangle (4.7,2.3); \node[font=\tiny] at (2.5,2.1){Job Reference};
+    \draw (0.3,1.4) rectangle (4.7,1.8); \node[font=\tiny] at (2.5,1.6){Amount};
+    \draw (0.3,0.9) rectangle (4.7,1.3); \node[font=\tiny] at (2.5,1.1){Payment Status};
+    \draw (1.7,0.3) rectangle (3.3,0.7); \node[font=\tiny] at (2.5,0.5){Create};
+  \end{tikzpicture}
+  \captionof{figure}{Invoice screen: create and view invoices per job, calls \texttt{POST /invoices} and \texttt{GET /invoices}.}
   \label{fig:fe-second}
 \end{minipage}
 \end{figure}
 
 Figures~\ref{fig:fe-connect}--\ref{fig:fe-second} show the four screens of the
-prototype. Figure~\ref{fig:fe-connect} shows <<< the connection dialog that
-collects the API URL and X-API-Key at startup >>>; Figure~\ref{fig:fe-main}
-shows <<< the main screen and the endpoint it reads from >>>;
-Figure~\ref{fig:fe-detail} shows <<< the form used to create/edit a record and
-the write endpoint it calls >>>; and Figure~\ref{fig:fe-second} shows <<< the
-remaining screen >>>.
+prototype. Figure~\ref{fig:fe-connect} shows the connection dialog that
+collects the API URL and X-API-Key at startup; Figure~\ref{fig:fe-main}
+shows the main screen listing all jobs together with their calculated profit,
+reading from \texttt{GET /jobs/profit}; Figure~\ref{fig:fe-detail} shows the
+form used to add a new job and assign materials to it, calling
+\texttt{POST /jobs} and \texttt{POST /job\_materials}; and
+Figure~\ref{fig:fe-second} shows the invoice screen, where an invoice is
+created for a completed job via \texttt{POST /invoices}.
 
 % ============================================================
 \section{Operation with Docker Compose}
 % ============================================================
 
-<<< Which services run in your docker-compose.yml (at least postgres and api)?
-Where do the credentials live (.env)? How is the backend deployed on the
-lecture server? >>>
+The backend is deployed using Docker Compose.
+The docker-compose.yml file contains two main services:
+a PostgreSQL database service and a FastAPI backend service.
+
+Database credentials and configuration values are stored in an .env file.
+The backend container communicates with PostgreSQL through the internal Docker
+network. The complete backend deployment runs on the lecture server.
 
 % ============================================================
 \section{Scope, milestones and risks}
 % ============================================================
 
-\textbf{Scope.} <<< How many tables and endpoints? >>>
+\textbf{Scope.} The project contains five database tables and approximately 15 FastAPI endpoints covering CRUD operations.
 
-\textbf{Milestones and schedule.} <<< Fill in the week and the estimated hours;
-the hours should add up to roughly 40. >>>
+\textbf{Milestones and schedule.}
 
 \renewcommand{\arraystretch}{1.2}
 \begin{tabularx}{\linewidth}{@{}p{1.4cm}Xp{1.8cm}@{}}
 \toprule
 \textbf{Week} & \textbf{Milestone} & \textbf{Est. hours} \\
 \midrule
-<<<1>>>   & <<< e.g. schema + seed data ready >>>                        & <<<8>>> \\
-<<<2--3>>> & <<< e.g. API reading/writing, protected by X-API-Key >>>   & <<<12>>> \\
-<<<4--5>>> & <<< e.g. frontend operates the core endpoints, .deb >>>    & <<<10>>> \\
-<<<6>>>   & <<< e.g. tests + documentation + video >>>                  & <<<10>>> \\
+1 & Database schema, ER model and seed data ready & 8 \\
+2--3 & FastAPI CRUD endpoints with X-API-Key protection & 12 \\
+4--5 & Frontend implementation and .deb packaging & 10 \\
+6 & Testing, documentation and video preparation & 10 \\
 \bottomrule
 \end{tabularx}
 
-\textbf{Risks.} <<< One or two risks that could make the project fail. >>>
+\textbf{Risks.} Two risks were identified for this project. First, the profit
+calculation depends on complete and correct material price data; missing or
+outdated purchase prices in the \texttt{materials} table would lead to an
+incorrect profitability report. Second, the .deb packaging and
+frontend-backend integration could take longer than planned if dependency or
+configuration issues arise on the lecture server, which would put pressure on
+the remaining schedule.
 
 % ============================================================
 \section{Acceptance criteria and testing}
 % ============================================================
 
-<<< State when your system counts as ``done and correct'', and how you prove it.
-Formulate each criterion as a checkable statement, then name the test that backs
-it. Turn the risk above into at least one concrete test case. >>>
+This section states when the system counts as done and correct, and how this
+is proven. Each criterion is formulated as a checkable statement, followed by
+the test that backs it. The risk named above is covered by a dedicated test
+case.
 
-\textbf{Acceptance criteria.} <<< Checkable statements about the finished system. >>>
+\textbf{Acceptance criteria.}
 \begin{itemize}[topsep=2pt]
-  \item <<< e.g. A record that violates a constraint is rejected (API returns 4xx). >>>
-  \item <<< e.g. GET /<<<…>>> returns the correct aggregated value (JOIN + aggregation). >>>
-  \item <<< e.g. Write endpoints without a valid X-API-Key are refused (401/403). >>>
+  \item A job or invoice that violates a constraint (e.g. missing
+        \texttt{customer\_id} or a negative amount) is rejected by the API
+        (returns 4xx).
+  \item \texttt{GET /jobs/profit} returns the correct profit value for each
+        job, calculated as invoice amount minus the summed cost of all
+        associated materials (JOIN + aggregation).
+  \item Write endpoints (\texttt{POST /jobs}, \texttt{POST /job\_materials},
+        \texttt{POST /invoices}) without a valid X-API-Key are refused
+        (401/403).
 \end{itemize}
 
-\textbf{Test plan.} <<< What you test and with which tools. A short list is enough. >>>
+\textbf{Test plan.}
 \begin{itemize}[topsep=2pt]
-  \item \textbf{Database:} <<< which constraints (PK/FK/UNIQUE/NOT NULL) you verify. >>>
-  \item \textbf{API:} <<< endpoint tests, happy path + error cases, e.g. with
-        \texttt{pytest} and FastAPI's \texttt{TestClient} against a test database (L 08). >>>
-  \item \textbf{Business rule:} <<< the test that covers the risk named above. >>>
+  \item \textbf{Database:} verify PRIMARY KEY constraints on all id columns,
+        FOREIGN KEY constraints between \texttt{jobs}--\texttt{customers},
+        \texttt{job\_materials}--\texttt{jobs},
+        \texttt{job\_materials}--\texttt{materials} and
+        \texttt{invoices}--\texttt{jobs}, and NOT NULL constraints on
+        required fields such as customer name and invoice amount.
+  \item \textbf{API:} endpoint tests covering the happy path and error cases
+        (e.g. missing fields, invalid IDs, missing API key) using
+        \texttt{pytest} and FastAPI's \texttt{TestClient} against a test
+        database.
+  \item \textbf{Business rule:} a dedicated test inserts a job with known
+        material costs and invoice amount, then checks that
+        \texttt{GET /jobs/profit} returns the expected profit value,
+        covering the risk of incorrect price data named above.
 \end{itemize}
 
 \vspace{1em}
