@@ -133,4 +133,30 @@ If that number is positive, you made money on the job (shown in green). If it's 
   \item \textbf{No profit shown for a job:} the job needs an invoice first. Just add one following Step 4.
 \end{itemize}
 
+\section{Frequently asked questions}
+
+\subsection*{Can I edit a job after I've created it?}
+
+Not directly in the current version -- once a job is saved, its details cannot be changed from the app. If you made a mistake, create a new job with the correct information. Editing existing jobs may be added in a future version.
+
+\subsection*{What happens if I enter a customer ID that doesn't exist?}
+
+The app will show an error message and the job will not be created. Make sure you use the correct customer ID -- you can check existing customers by asking whoever manages your customer list, or by checking a previous invoice.
+
+\subsection*{Do I see jobs that don't have an invoice yet?}
+
+Yes -- all jobs appear in the overview. However, a job only shows a profit value once an invoice has been created for it. Until then, that job simply won't show up in the profit calculation.
+
+\subsection*{Can several people use the app at the same time?}
+
+Yes, as long as everyone connects to the same server using the same API URL and key. Everyone will see the same up-to-date list of jobs.
+
+\subsection*{What if I forget the X-API-Key?}
+
+Ask whoever set up your system -- they can look it up or create a new one for you. The key is not something you need to remember by heart; it can be copied and pasted when connecting.
+
+\subsection*{Is my data safe if I close the app?}
+
+Yes. All your data (customers, jobs, materials, invoices) is stored on the server, not on your computer. Closing the app does not delete anything -- simply reopen it and reconnect to see your data again.
+
 \end{document}
