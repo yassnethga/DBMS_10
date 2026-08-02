@@ -1,61 +1,92 @@
-# DBMS_10 – Project Proposal for the Term Project
+# HandwerkerKasse -- Material and Invoice Tracker with Profit Analysis per Job
 
-**Module:** Introduction to Database Management Systems · THGA Bochum
-**Lecturer:** Stephan Bökelmann · <sboekelmann@ep1.rub.de>
-**Prerequisites:** Lectures 01–10, exercises DBMS_01–DBMS_09
+**Module:** Introduction to Database Management Systems - THGA Bochum
+**Author:** Mohamed Yassine Hachimi
+**Lecturer:** Stephan Boekelmann - sboekelmann@ep1.rub.de
 
-This exercise is **structured differently** from the previous ones: you do not
-write code, you **design** your own database-backed system and submit a
-**project proposal** to the lecturer. The proposal is the basis of your **term
-project** (graded deliverable), in which you build a complete system over up to
-two months (≈ 40 h of real work, including documentation and video).
+HandwerkerKasse is a database-driven application for small craft businesses.
+It lets users manage customers, jobs, materials and invoices, and automatically
+calculates the profit of each job by comparing the invoice amount against the
+material costs used.
 
-**Architecture** — everything on the lecture server:
+## Documentation
 
-```
-Frontend (installed .deb)  --HTTP + X-API-Key-->  FastAPI  -->  PostgreSQL
-                                     backend orchestrated by Docker Compose
-```
+- Project Proposal: proposal-template/proposal.tex
+- User Guide: user-documentation/documentation.pdf
+- Developer Documentation: developer-documentation/documentation.pdf
 
-- **Backend** (PostgreSQL + FastAPI) runs in containers via Docker Compose.
-- **Frontend** is built as a Debian installer (`.deb`) and installed next to it.
-- Write endpoints are protected with an `X-API-Key`.
+## Architecture
 
-The term project is submitted as three parts: the **running system**, a
-**documentation** (a GitHub repo with LaTeX CI + Makefile), and an **8–10 min
-video** (`.mpg` to Moodle *or* an unlisted YouTube link).
+Frontend (Tkinter, installed as .deb) -- HTTP + X-API-Key --> FastAPI --> PostgreSQL
+
+Backend and database run via Docker Compose.
+
+- Database: PostgreSQL, 5 tables (customers, jobs, materials, job_materials, invoices), normalized to 3NF.
+- Backend: FastAPI with SQLAlchemy, 12 REST endpoints, write operations protected with an X-API-Key header.
+- Frontend: Tkinter desktop application, packaged as a Debian (.deb) installer.
+- Deployment: Backend and database run as containers via Docker Compose.
 
 ## Repository layout
 
-```
-src/dbms_10.tex             # the exercise / assignment
-proposal-template/          # fill-in skeleton students copy for the proposal
-  proposal.tex
-example-documentation/      # worked example of the final documentation
-  documentation.tex
-style/thga-db.sty           # THGA corporate design (copied from the course repo)
-.github/workflows/build.yml # LaTeX build + release — copy this into your own repo
-Makefile                    # builds all three PDFs into out/
-out/                        # generated PDFs (not committed)
-```
+app/
+  docker-compose.yml    -- orchestrates backend + database containers
+  .env                  -- local configuration (not committed)
+  db/
+    schema.sql          -- database schema (tables, constraints)
+    seed.sql            -- sample data for local testing
+  backend/
+    main.py             -- FastAPI application, all endpoints
+    models.py           -- SQLAlchemy models
+    schemas.py           -- Pydantic request/response schemas
+    database.py          -- database connection setup
+    test_api.py           -- pytest test suite
+    conftest.py            -- test fixtures (isolated test database)
+    Dockerfile
+  frontend/
+    main.py               -- Tkinter desktop application
 
-The `proposal-template/` and `example-documentation/` folders are meant to be
-**copied**: start your proposal from the template, and model your documentation
-repository on the example — together with the `Makefile` and
-`.github/workflows/build.yml`, which build the PDF and publish it as a GitHub
-Release on every tag push.
+packaging/
+  handwerkerkasse/         -- .deb package structure
+  handwerkerkasse.deb      -- built Debian package
 
-## Build
+proposal-template/         -- original project proposal
+user-documentation/        -- LaTeX source + PDF: User Guide
+developer-documentation/   -- LaTeX source + PDF: Developer Documentation
+style/thga-db.sty           -- THGA corporate design
+docs-screenshots/           -- screenshots used across both documentation PDFs
 
-Requirement: `latexmk` and TeX Live (`apt install latexmk texlive-full`).
+## Running the system
 
-```bash
-make          # builds out/dbms_10.pdf, out/proposal.pdf, out/documentation.pdf
-make clean    # remove auxiliary files, keep PDFs
-make distclean# remove everything including out/
-```
+Requirements: Docker, Docker Compose.
 
-## Releases
+    cd app
+    docker compose up -d --build
 
-Pushing a tag matching `v*` triggers the GitHub Actions workflow, which builds
-all three PDFs and attaches them to a GitHub Release automatically.
+This starts PostgreSQL (seeded with sample data) and the FastAPI backend at
+http://localhost:8000. Interactive API docs are available at
+http://localhost:8000/docs
+
+## Running the frontend
+
+    sudo apt install ./packaging/handwerkerkasse.deb
+    handwerkerkasse
+
+Or run it directly without installing:
+
+    cd app/frontend
+    python3 main.py
+
+## Running the tests
+
+    cd app/backend
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    pytest -v
+
+## Building the documentation PDFs
+
+Requirement: latexmk and TeX Live (apt install latexmk texlive-full).
+
+    cd user-documentation && make
+    cd ../developer-documentation && make
