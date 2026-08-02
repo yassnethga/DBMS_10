@@ -1,0 +1,13 @@
+Package: handwerkerkasse
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: all
+Depends: python3, python3-tk, python3-requests
+Maintainer: Mohamed Yassine Hachimi <yassine@example.com>
+Description: HandwerkerKasse Desktop Client
+ A lightweight desktop application for small craft businesses to
+ manage customers, jobs, materials and invoices, with automatic
+ profit calculation per job. Connects to the HandwerkerKasse
+ FastAPI backend via HTTP.
+ 

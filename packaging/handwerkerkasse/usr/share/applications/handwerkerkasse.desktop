@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=HandwerkerKasse
+Comment=Material and Invoice Tracker with Profit Analysis
+Exec=/usr/bin/handwerkerkasse
+Terminal=false
+Type=Application
+Categories=Office;Finance;
