@@ -26,6 +26,20 @@ Backend and database run via Docker Compose.
 - Frontend: Tkinter desktop application, packaged as a Debian (.deb) installer.
 - Deployment: Backend and database run as containers via Docker Compose.
 
+## Screenshots
+
+**Jobs overview with automatic profit calculation:**
+
+![Jobs Overview](docs-screenshots/10_frontend_jobs-overview.png)
+
+**Interactive API documentation (Swagger UI):**
+
+![Swagger UI](docs-screenshots/03_api_swagger-overview.png)
+
+**Automated test suite passing:**
+
+![Tests passing](docs-screenshots/08_test_pytest-passing.png)
+
 ## Repository layout
 ```
 app/
