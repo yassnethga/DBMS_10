@@ -116,9 +116,17 @@ docker compose up -d
 
 **Verification:** querying the seeded data directly via `psql`.
 
+```bash
+docker compose exec db psql -U handwerker_admin -d handwerkerkasse -c "SELECT * FROM jobs;"
+```
+
 ![Seed data verification](docs-screenshots/01_db_seed-data-jobs.png)
 
 **Verification:** the database container running in a healthy state.
+
+```bash
+docker compose ps
+```
 
 ![Container running](docs-screenshots/02_db_container-running.png)
 
@@ -137,10 +145,18 @@ uvicorn main:app --reload
 
 **Verification:** `GET /customers` returning seeded data.
 
+```bash
+curl http://localhost:8000/customers
+```
+
 ![GET customers](docs-screenshots/04_api_get-customers-response.png_1.png)
 ![GET customers response body](docs-screenshots/04_api_get-customers-response.png_2.png)
 
 **Verification:** `GET /jobs/profit` returning the calculated profit per job (the core feature of the system).
+
+```bash
+curl http://localhost:8000/jobs/profit
+```
 
 ![Profit calculation](docs-screenshots/05_api_jobs-profit-response.png_1.png)
 ![Profit calculation continued](docs-screenshots/05_api_jobs-profit-response.png_2.png)
@@ -151,9 +167,22 @@ Write endpoints were protected with an `X-API-Key` header.
 
 **Verification:** a write request without a valid key is rejected with 401.
 
+```bash
+curl -X POST http://localhost:8000/customers \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Test", "email": null, "phone": null}'
+```
+
 ![Unauthorized request](docs-screenshots/06_api_post-customer-unauthorized.png)
 
 **Verification:** the same request succeeding with a valid key.
+
+```bash
+curl -X POST http://localhost:8000/customers \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: <your-api-key>" \
+  -d '{"name": "Test", "email": null, "phone": null}'
+```
 
 ![Authorized request](docs-screenshots/07_api_post-customer-success.png_1.png)
 ![Authorized request response body](docs-screenshots/07_api_post-customer-success.png_2.png)
@@ -194,6 +223,11 @@ docker compose up -d --build
 ```
 
 **Verification:** both containers running together.
+
+```bash
+docker compose ps
+curl http://localhost:8000/customers
+```
 
 ![Both containers running](docs-screenshots/13_deploy_docker-compose-both-running.png)
 
