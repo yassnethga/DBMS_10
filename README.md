@@ -244,3 +244,17 @@ sudo apt install ./handwerkerkasse.deb
 **Verification:** the installed application running.
 
 ![Installed .deb running](docs-screenshots/14_deploy_deb-package-installed-running.png)
+
+## Submission
+
+This repository contains the complete term project for the module *Introduction to Database Management Systems* (THGA Bochum, Summer Term 2026):
+
+- **System:** fully functional, containerized, and packaged as described above.
+- **Documentation:** User Guide and Developer Documentation, both in `user-documentation/` and `developer-documentation/`.
+- **Video:** an 8-10 minute presentation is available here: `<link to be added>`.
+
+## Author
+
+Mohamed Yassine Hachimi
+Introduction to Database Management Systems, THGA Bochum
+Lecturer: Stephan Boekelmann - sboekelmann@ep1.rub.de
