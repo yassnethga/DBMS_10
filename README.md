@@ -58,8 +58,10 @@ docs-screenshots/
 ## Running the system
 
 Requirements: Docker, Docker Compose.
+```
 cd app
 docker compose up -d --build
+```
 
 This starts PostgreSQL (seeded with sample data) and the FastAPI backend at
 http://localhost:8000. Interactive API docs are available at
@@ -68,25 +70,33 @@ http://localhost:8000/docs
 
 ## Running the frontend
 
+```
 sudo apt install ./packaging/handwerkerkasse.deb
 handwerkerkasse
+```
 
 Or run it directly without installing:
 
+```
 cd app/frontend
 python3 main.py
+```
 
 ## Running the tests
 
+```
 cd app/backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pytest -v
+```
 
 ## Building the documentation PDFs
 
 Requirement: latexmk and TeX Live (apt install latexmk texlive-full).
 
+```
 cd user-documentation && make
 cd ../developer-documentation && make
+```
