@@ -137,11 +137,11 @@ uvicorn main:app --reload
 
 **Verification:** `GET /customers` returning seeded data.
 
-![GET customers](docs-screenshots/04_api_get-customers-response_1.png)
+![GET customers](docs-screenshots/04_api_get-customers-response.png_1.png)
 
 **Verification:** `GET /jobs/profit` returning the calculated profit per job (the core feature of the system).
 
-![Profit calculation](docs-screenshots/05_api_jobs-profit-response_1.png)
+![Profit calculation](docs-screenshots/05_api_jobs-profit-response.png_1.png)
 
 ### Step 3 -- API key authentication
 
@@ -153,7 +153,7 @@ Write endpoints were protected with an `X-API-Key` header.
 
 **Verification:** the same request succeeding with a valid key.
 
-![Authorized request](docs-screenshots/07_api_post-customer-success_1.png)
+![Authorized request](docs-screenshots/07_api_post-customer-success.png_1.png)
 
 ### Step 4 -- Automated testing with pytest
 
