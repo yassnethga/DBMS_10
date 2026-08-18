@@ -1,2 +1,3 @@
 #!/bin/bash
-python3 /opt/handwerkerkasse/main.py
+cd /opt/handwerkerkasse
+python3 __main__.py
