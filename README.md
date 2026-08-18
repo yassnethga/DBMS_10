@@ -254,7 +254,7 @@ This repository contains the complete term project for the module *Introduction 
 
 - **System:** fully functional, containerized, and packaged as described above.
 - **Documentation:** User Guide and Developer Documentation, both in `user-documentation/` and `developer-documentation/`.
-- **Video:** an 8-10 minute presentation is available here: `<link to be added>`.
+- **Video:** an 10-12 minute presentation is available here: `<link to be added>`.
 
 ## Author
 
