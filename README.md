@@ -43,7 +43,10 @@ app/
     conftest.py
     Dockerfile
   frontend/
-    main.py
+    api.py
+    ui.py
+    connection_dialog.py
+    __main__.py
 
 packaging/
   handwerkerkasse/
