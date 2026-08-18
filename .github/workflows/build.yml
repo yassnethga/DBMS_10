@@ -50,5 +50,5 @@ jobs:
         run: |
           gh release create "${{ github.ref_name }}" \
             --title "DBMS_10 ${{ github.ref_name }}" \
-            --notes "Automatically built documents for tag \`${{ github.ref_name }}\`: exercise, proposal template and example documentation." \
+            --notes "Automatically built documents for tag \`${{ github.ref_name }}\`: project proposal, user documentation and developer documentation." \
             out/*.pdf
