@@ -261,3 +261,7 @@ This repository contains the complete term project for the module *Introduction 
 Mohamed Yassine Hachimi
 Introduction to Database Management Systems, THGA Bochum
 Lecturer: Stephan Boekelmann - sboekelmann@ep1.rub.de
+
+## Further Reading
+
+For detailed design decisions, architecture reasoning, and reflection questions about implementation choices, see the [Developer Documentation](developer-documentation/documentation.pdf).
