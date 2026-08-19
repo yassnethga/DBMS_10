@@ -58,6 +58,10 @@ developer-documentation/
 style/thga-db.sty
 docs-screenshots/
 ```
+## Environment setup
+
+Before running the system for the first time, copy the example environment file and adjust the values:
+
 ## Running the system
 
 Requirements: Docker, Docker Compose.
